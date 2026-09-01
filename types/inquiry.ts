@@ -22,6 +22,23 @@ export interface InquiryResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;
+  message?: string;
+  messageId?: string;
+}
+
+export interface EmailApiRequestBody {
+  type: 'contact' | 'product';
+  productId?: string;
+  data: {
+    first_name: string;
+    last_name: string;
+    email: string;
+    whatsapp_number: string;
+    country_code?: string;
+    query?: string;
+    message: string;
+    product_name?: string;
+  };
 }
 
 export interface Country {
