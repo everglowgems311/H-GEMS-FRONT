@@ -125,22 +125,27 @@ export async function POST(req: Request) {
       timeZone: "UTC",
     }) + " (UTC)";
 
-    let subject = "";
-    let textBody = "";
-    let htmlBody = "";
-
     const customerFullName = `${firstName} ${lastName}`;
+    const safeFirstName = escapeHtml(firstName);
     const safeName = escapeHtml(customerFullName);
     const safeEmail = escapeHtml(email);
     const safeWhatsApp = escapeHtml(whatsapp);
     const safeMessage = escapeHtml(message).replace(/\n/g, "<br/>");
     const safeDate = escapeHtml(nowFormatted);
 
+    let businessSubject = "";
+    let businessTextBody = "";
+    let businessHtmlBody = "";
+
+    let customerSubject = "";
+    let customerTextBody = "";
+    let customerHtmlBody = "";
+
     if (type === "contact") {
       const safeQuery = escapeHtml(query);
-      subject = `New Contact Inquiry - ${query || "Everglow Gems"}`;
+      businessSubject = `New Contact Inquiry - ${query || "Everglow Gems"}`;
 
-      textBody = `New Contact Inquiry
+      businessTextBody = `New Contact Inquiry
 
 CUSTOMER INFORMATION
 
@@ -158,12 +163,12 @@ Submitted At:
 ${nowFormatted}
 `;
 
-      htmlBody = `
+      businessHtmlBody = `
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
-  <title>${escapeHtml(subject)}</title>
+  <title>${escapeHtml(businessSubject)}</title>
 </head>
 <body style="margin: 0; padding: 0; background-color: #f7f6f2; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #202124;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f7f6f2; padding: 40px 20px;">
@@ -239,17 +244,110 @@ ${nowFormatted}
 </body>
 </html>
 `;
+
+      // Customer copy for Contact Inquiry
+      customerSubject = `Inquiry Received: Everglow Gems Atelier`;
+      customerTextBody = `Dear ${firstName},
+
+Thank you for reaching out to Everglow Gems Haute Joaillerie Atelier.
+We have received your inquiry and our private concierge will review it and get back to you shortly.
+
+SUMMARY OF YOUR INQUIRY
+----------------------------------------
+Inquiry Topic: ${query}
+WhatsApp Number: ${whatsapp}
+Message:
+${message}
+
+Submitted At: ${nowFormatted}
+
+If you have any additional questions in the meantime, please feel free to reply directly to this email.
+
+Warm regards,
+Everglow Gems Atelier Concierge
+Salon & Studio: Maximilian Street 42, 80539 Munich, Germany
+Concierge Telephone: +49 (0) 89 2109 4500
+`;
+
+      customerHtmlBody = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>${escapeHtml(customerSubject)}</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f7f6f2; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #202124;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f7f6f2; padding: 40px 20px;">
+    <tr>
+      <td align="center">
+        <table width="100%" max-width="600" cellpadding="0" cellspacing="0" style="max-width: 600px; background-color: #ffffff; border-radius: 12px; border: 1px solid #e8e6e1; overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,0.04);">
+          <!-- Header -->
+          <tr>
+            <td style="background-color: #202124; padding: 32px 36px; text-align: center;">
+              <h1 style="margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 26px; color: #ffffff; letter-spacing: 0.12em; text-transform: uppercase;">EVERGLOW GEMS</h1>
+              <p style="margin: 6px 0 0 0; font-size: 11px; color: #c5a97a; letter-spacing: 0.25em; text-transform: uppercase;">Haute Joaillerie Atelier</p>
+            </td>
+          </tr>
+
+          <!-- Greeting -->
+          <tr>
+            <td style="padding: 32px 36px 12px 36px;">
+              <h2 style="margin: 0 0 12px 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 24px; color: #202124;">Dear ${safeFirstName},</h2>
+              <p style="margin: 0; font-size: 15px; line-height: 1.7; color: #555555;">
+                Thank you for contacting <strong>Everglow Gems</strong>. We have received your inquiry, and our private concierge will attend to your request promptly.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Summary Box -->
+          <tr>
+            <td style="padding: 16px 36px 24px 36px;">
+              <div style="background-color: #faf9f6; border: 1px solid #e8e6e1; border-radius: 8px; padding: 20px;">
+                <p style="margin: 0 0 12px 0; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: #8a7346;">Your Inquiry Summary</p>
+                <p style="margin: 0 0 8px 0; font-size: 14px; color: #202124;"><strong>Topic:</strong> ${safeQuery}</p>
+                <p style="margin: 0 0 12px 0; font-size: 14px; color: #202124;"><strong>WhatsApp:</strong> ${safeWhatsApp}</p>
+                <p style="margin: 0 0 4px 0; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #8a8d93;">Your Message:</p>
+                <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #444444; font-style: italic;">"${safeMessage}"</p>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Concierge Contact Details -->
+          <tr>
+            <td style="padding: 0 36px 28px 36px;">
+              <p style="margin: 0 0 6px 0; font-size: 13px; color: #777777;">
+                If you need immediate assistance or would like to schedule a private showing, you can also reach us directly:
+              </p>
+              <p style="margin: 0; font-size: 13px; color: #202124;">
+                📍 <strong>Salon & Studio:</strong> Maximilian Street 42, 80539 Munich, Germany<br/>
+                📞 <strong>Telephone:</strong> +49 (0) 89 2109 4500 (Mon – Sat: 10:00 – 19:00 CET)
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer Info -->
+          <tr>
+            <td style="background-color: #faf9f6; padding: 20px 36px; border-top: 1px solid #e8e6e1; font-size: 12px; color: #8a8d93; text-align: center;">
+              Everglow Gems — Private Client Concierge
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+`;
     } else {
       // Product inquiry
       const verifiedProduct = productId ? getProductById(productId) : undefined;
       const rawProductName = verifiedProduct?.title || verifiedProduct?.name || data.product_name || "Bespoke Jewelry Piece";
       const productRef = verifiedProduct?.id || productId || "N/A";
       const productSubtitle = verifiedProduct?.subtitle || verifiedProduct?.material || "";
-      const productImage = verifiedProduct?.image || "";
 
-      subject = `New Product Inquiry - ${rawProductName}`;
+      businessSubject = `New Product Inquiry - ${rawProductName}`;
 
-      textBody = `New Product Inquiry
+      businessTextBody = `New Product Inquiry
 
 PRODUCT INFORMATION
 
@@ -274,12 +372,12 @@ ${nowFormatted}
       const safeProductRef = escapeHtml(productRef);
       const safeSubtitle = escapeHtml(productSubtitle);
 
-      htmlBody = `
+      businessHtmlBody = `
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
-  <title>${escapeHtml(subject)}</title>
+  <title>${escapeHtml(businessSubject)}</title>
 </head>
 <body style="margin: 0; padding: 0; background-color: #f7f6f2; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #202124;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f7f6f2; padding: 40px 20px;">
@@ -365,22 +463,142 @@ ${nowFormatted}
 </body>
 </html>
 `;
+
+      // Customer copy for Product Inquiry
+      customerSubject = `Inquiry Received: ${rawProductName} — Everglow Gems`;
+      customerTextBody = `Dear ${firstName},
+
+Thank you for your interest in ${rawProductName} from Everglow Gems Haute Joaillerie Atelier.
+We have received your inquiry, and our private concierge will review your message and provide you with all requested details.
+
+PRODUCT INQUIRY SUMMARY
+----------------------------------------
+Product: ${rawProductName}
+Reference: ${productRef}
+${productSubtitle ? `Details: ${productSubtitle}\n` : ""}WhatsApp Number: ${whatsapp}
+Message:
+${message}
+
+Submitted At: ${nowFormatted}
+
+If you have any questions in the meantime or wish to discuss bespoke customization, you can reply directly to this email.
+
+Warm regards,
+Everglow Gems Atelier Concierge
+Salon & Studio: Maximilian Street 42, 80539 Munich, Germany
+Concierge Telephone: +49 (0) 89 2109 4500
+`;
+
+      customerHtmlBody = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>${escapeHtml(customerSubject)}</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f7f6f2; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #202124;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f7f6f2; padding: 40px 20px;">
+    <tr>
+      <td align="center">
+        <table width="100%" max-width="600" cellpadding="0" cellspacing="0" style="max-width: 600px; background-color: #ffffff; border-radius: 12px; border: 1px solid #e8e6e1; overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,0.04);">
+          <!-- Header -->
+          <tr>
+            <td style="background-color: #202124; padding: 32px 36px; text-align: center;">
+              <h1 style="margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 26px; color: #ffffff; letter-spacing: 0.12em; text-transform: uppercase;">EVERGLOW GEMS</h1>
+              <p style="margin: 6px 0 0 0; font-size: 11px; color: #c5a97a; letter-spacing: 0.25em; text-transform: uppercase;">Haute Joaillerie Atelier</p>
+            </td>
+          </tr>
+
+          <!-- Greeting -->
+          <tr>
+            <td style="padding: 32px 36px 12px 36px;">
+              <h2 style="margin: 0 0 12px 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 24px; color: #202124;">Dear ${safeFirstName},</h2>
+              <p style="margin: 0; font-size: 15px; line-height: 1.7; color: #555555;">
+                Thank you for your interest in <strong>${safeProductName}</strong>. We have received your inquiry, and our atelier concierge will assist you shortly.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Product Details Box -->
+          <tr>
+            <td style="padding: 12px 36px 16px 36px;">
+              <div style="background-color: #faf9f6; border: 1px solid #e8e6e1; border-radius: 8px; padding: 18px;">
+                <p style="margin: 0 0 4px 0; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #8a7346;">Selected Masterwork</p>
+                <p style="margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 18px; font-weight: 600; color: #202124;">${safeProductName}</p>
+                ${safeSubtitle ? `<p style="margin: 4px 0 0 0; font-size: 13px; color: #8a7346;">${safeSubtitle}</p>` : ""}
+                <p style="margin: 6px 0 0 0; font-size: 12px; color: #777777;">Reference: <code>${safeProductRef}</code></p>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Inquiry Summary Box -->
+          <tr>
+            <td style="padding: 0 36px 24px 36px;">
+              <div style="background-color: #ffffff; border: 1px solid #f0eee9; border-radius: 8px; padding: 16px;">
+                <p style="margin: 0 0 8px 0; font-size: 14px; color: #202124;"><strong>WhatsApp:</strong> ${safeWhatsApp}</p>
+                <p style="margin: 0 0 4px 0; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #8a8d93;">Your Message:</p>
+                <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #444444; font-style: italic;">"${safeMessage}"</p>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Concierge Contact Details -->
+          <tr>
+            <td style="padding: 0 36px 28px 36px;">
+              <p style="margin: 0 0 6px 0; font-size: 13px; color: #777777;">
+                Our private concierge is at your disposal for appointments, custom fittings, or bespoke creations:
+              </p>
+              <p style="margin: 0; font-size: 13px; color: #202124;">
+                📍 <strong>Salon & Studio:</strong> Maximilian Street 42, 80539 Munich, Germany<br/>
+                📞 <strong>Telephone:</strong> +49 (0) 89 2109 4500 (Mon – Sat: 10:00 – 19:00 CET)
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer Info -->
+          <tr>
+            <td style="background-color: #faf9f6; padding: 20px 36px; border-top: 1px solid #e8e6e1; font-size: 12px; color: #8a8d93; text-align: center;">
+              Everglow Gems — Private Client Concierge
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+`;
     }
 
     const mailer = new MailServer();
 
-    const result = await mailer.sendMail({
+    // 1. Send inquiry notification email to business inbox
+    const businessEmailPromise = mailer.sendMail({
       to: recipient,
-      subject,
-      text: textBody,
-      html: htmlBody,
+      subject: businessSubject,
+      text: businessTextBody,
+      html: businessHtmlBody,
       replyTo: email,
     });
+
+    // 2. Send acknowledgment / copy email to the customer
+    const customerEmailPromise = mailer.sendMail({
+      to: email,
+      subject: customerSubject,
+      text: customerTextBody,
+      html: customerHtmlBody,
+      replyTo: recipient,
+    });
+
+    const [businessResult] = await Promise.all([
+      businessEmailPromise,
+      customerEmailPromise,
+    ]);
 
     return NextResponse.json({
       success: true,
       message: "Inquiry sent successfully.",
-      messageId: result.messageId,
+      messageId: businessResult.messageId,
     });
   } catch (error) {
     console.error("❌ Email API route error:", error);
