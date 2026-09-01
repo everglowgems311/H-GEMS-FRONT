@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #FAFAF8;
+  --color-background-secondary: #F3F4F2;
+  --color-surface: #FFFFFF;
+  --color-text: #202124;
+  --color-text-muted: #6B7075;
+  --color-border: #E4E6E8;
+  --color-accent: #C9B58A;
+  --color-accent-cool: #B8C7D1;
+  --color-hover: #EEF0F1;
+  --color-gold-light: #DFC79B;
+  --color-gold-dark: #A8956A;
+  --color-accent-glow: rgba(201, 181, 138, 0.18);
+  --color-border-gold: rgba(201, 181, 138, 0.35);
+  --color-glass: rgba(250, 250, 248, 0.88);
+
+  --font-sans: var(--font-montserrat), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: var(--font-cormorant), Garamond, Georgia, serif;
+
+  --ease-luxury: cubic-bezier(0.22, 1, 0.36, 1);
+
+  @keyframes heroSubtleZoom {
+    0% { transform: scale(1.06); }
+    100% { transform: scale(1.01); }
+  }
+
+  @keyframes heroContentAscend {
+    0% { opacity: 0; transform: translateY(28px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes heroHeaderFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}
+
+:root {
+  font-family: var(--font-sans);
+  color-scheme: light;
+  color: var(--color-text);
+  background-color: var(--color-background);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  outline: none;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+/* Accessibility: respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
