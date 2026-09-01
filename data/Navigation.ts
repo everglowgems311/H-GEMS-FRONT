@@ -2,9 +2,16 @@ import { NavItem } from '@/types/navigation';
 
 export const NAV_ITEMS: NavItem[] = [
   { id: 'home', label: 'Home', path: '/' },
-  { id: 'gold-jewelry', label: 'Gold Jewelry', path: '/gold' },
-  { id: 'silver-jewelry', label: 'Silver Jewelry', path: '/silver' },
-  { id: 'gemstones', label: 'Gemstones', path: '/gemstones' },
+  {
+    id: 'collection',
+    label: 'Collection',
+    path: '/collections',
+    children: [
+      { id: 'gold', label: 'Gold', path: '/gold' },
+      { id: 'silver', label: 'Silver', path: '/silver' },
+      { id: 'diamond', label: 'Diamond', path: '/gemstones' },
+    ],
+  },
   { id: 'about', label: 'About Us', path: '/about' },
   { id: 'contact', label: 'Contact', path: '/contact' },
 ];

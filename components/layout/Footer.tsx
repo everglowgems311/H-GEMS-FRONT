@@ -99,14 +99,29 @@ export default function Footer({ onNavigate }: FooterProps) {
           </h3>
           <ul className="list-none p-0 m-0 flex flex-col gap-3.5">
             {NAV_ITEMS.map((item) => (
-              <li key={item.id}>
+              <li key={item.id} className="flex flex-col gap-1.5">
                 <button
                   type="button"
-                  className="font-sans text-[0.88rem] font-light text-text-muted no-underline bg-transparent border-none cursor-pointer p-0 text-left transition-all duration-300 hover:text-text hover:translate-x-1"
+                  className="font-sans text-[0.88rem] font-medium text-text-muted no-underline bg-transparent border-none cursor-pointer p-0 text-left transition-all duration-300 hover:text-text hover:translate-x-1"
                   onClick={() => handleLinkClick(item)}
                 >
                   {item.label}
                 </button>
+                {item.children && item.children.length > 0 && (
+                  <ul className="list-none pl-3.5 m-0 flex flex-col gap-1.5 border-l border-border">
+                    {item.children.map((child) => (
+                      <li key={child.id}>
+                        <button
+                          type="button"
+                          className="font-sans text-[0.82rem] font-light text-text-muted/80 no-underline bg-transparent border-none cursor-pointer p-0 text-left transition-all duration-300 hover:text-text hover:translate-x-1"
+                          onClick={() => handleLinkClick(child)}
+                        >
+                          {child.label}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
             ))}
           </ul>

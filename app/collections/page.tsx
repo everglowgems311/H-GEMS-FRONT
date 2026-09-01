@@ -26,6 +26,7 @@ export default function CollectionsPage() {
         image="/images/collection/gold-jewelry.jpg"
         fallbackImage="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=2070&auto=format&fit=crop"
         isMenuOpen={isMenuOpen}
+        variant="home"
         onToggleMenu={() => setIsMenuOpen((prev) => !prev)}
         onLogoClick={() => router.push('/')}
       />

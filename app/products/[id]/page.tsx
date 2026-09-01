@@ -210,13 +210,7 @@ export default function ProductDetailPage({
                 <span className="text-[1rem]" aria-hidden="true">♡</span>
               </button>
 
-              <button
-                type="button"
-                className="w-full bg-transparent text-text border border-border rounded-lg py-4 px-7 font-sans text-[0.9rem] font-medium tracking-[0.04em] cursor-pointer text-center transition-all duration-250 hover:bg-hover hover:border-accent-cool hover:-translate-y-[1px]"
-                onClick={() => setIsInquiryOpen(true)}
-              >
-                Request an exclusive consultation
-              </button>
+              
             </div>
           </div>
         </div>

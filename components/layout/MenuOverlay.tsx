@@ -22,9 +22,16 @@ export default function MenuOverlay({
   const panelRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
-  const effectiveActive = activeItem || (
-    NAV_ITEMS.find((n) => n.path === pathname)?.id || 'home'
-  );
+  const effectiveActive = activeItem || (() => {
+    for (const item of NAV_ITEMS) {
+      if (item.path === pathname) return item.id;
+      if (item.children) {
+        const match = item.children.find((c) => c.path === pathname);
+        if (match) return match.id;
+      }
+    }
+    return 'home';
+  })();
 
   // Close on Escape key press
   useEffect(() => {
@@ -123,7 +130,11 @@ export default function MenuOverlay({
         <nav className="w-full" aria-label="Main Navigation">
           <ul className="flex flex-col gap-3.5 max-[900px]:gap-2.5 max-[600px]:gap-2 list-none py-7 max-[900px]:py-5 max-[600px]:py-4 m-0">
             {NAV_ITEMS.map((item, index) => {
-              const isActive = effectiveActive === item.id || pathname === item.path;
+              const isChildActive = item.children?.some(
+                (c) => effectiveActive === c.id || pathname === c.path
+              );
+              const isActive = effectiveActive === item.id || pathname === item.path || isChildActive;
+
               return (
                 <li
                   key={item.id}
@@ -151,6 +162,48 @@ export default function MenuOverlay({
                     />
                     {item.label}
                   </Link>
+
+                  {/* Sub-collection Items */}
+                  {item.children && item.children.length > 0 && (
+                    <ul className="flex flex-col gap-2 max-[600px]:gap-1.5 list-none pl-6 max-[600px]:pl-5 pt-1.5 pb-1 m-0 border-l border-border ml-2.5">
+                      {item.children.map((child, childIndex) => {
+                        const isChildItemActive =
+                          effectiveActive === child.id || pathname === child.path;
+
+                        return (
+                          <li
+                            key={child.id}
+                            className="transition-all duration-300 ease-luxury"
+                            style={{
+                              transitionDelay: isOpen ? `${0.14 + (index + childIndex * 0.4) * 0.04}s` : '0s',
+                              opacity: isOpen ? 1 : 0,
+                              transform: isOpen ? 'translateX(0)' : 'translateX(-10px)',
+                            }}
+                          >
+                            <Link
+                              href={child.path}
+                              className={`group/sub inline-flex items-center gap-2.5 font-sans text-[clamp(0.95rem,1.5vw,1.15rem)] max-[600px]:text-[0.92rem] font-light tracking-[0.03em] no-underline bg-transparent border-none cursor-pointer py-0.5 transition-all duration-300 ease-luxury hover:text-accent hover:translate-x-1.5 ${
+                                isChildItemActive
+                                  ? 'text-accent font-medium'
+                                  : 'text-text-muted hover:text-text'
+                              }`}
+                              onClick={() => handleItemClick(child)}
+                            >
+                              <span
+                                className={`inline-block w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                                  isChildItemActive
+                                    ? 'bg-accent scale-125 shadow-[0_0_6px_var(--color-accent)]'
+                                    : 'bg-border group-hover/sub:bg-accent group-hover/sub:scale-125'
+                                }`}
+                                aria-hidden="true"
+                              />
+                              {child.label}
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
                 </li>
               );
             })}
