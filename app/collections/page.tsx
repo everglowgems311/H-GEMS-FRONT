@@ -3,19 +3,13 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import SectionHero from '@/components/common/SectionHero';
-import Collections from '@/components/section/Collections';
 import ProductGrid from '@/components/products/ProductGrid';
 import Footer from '@/components/layout/Footer';
 import MenuOverlay from '@/components/layout/MenuOverlay';
-import { CollectionItem } from '@/types/product';
 
 export default function CollectionsPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
-
-  const handleSelectCollection = (col: CollectionItem) => {
-    router.push(col.path || `/collections/${col.category}`);
-  };
 
   return (
     <main className="w-full bg-background min-h-screen">
@@ -30,8 +24,6 @@ export default function CollectionsPage() {
         onToggleMenu={() => setIsMenuOpen((prev) => !prev)}
         onLogoClick={() => router.push('/')}
       />
-
-      <Collections onSelectCollection={handleSelectCollection} />
 
       <ProductGrid
         category="all"

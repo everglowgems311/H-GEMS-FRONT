@@ -85,3 +85,6 @@ Thumbs.db:encryptable
 *.tmp
 *.temp
 *.bak
+
+.vercel
+.env*
